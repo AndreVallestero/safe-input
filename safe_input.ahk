@@ -27,7 +27,8 @@ safe_move_to(xDest, yDest, randScale = 1, speedScale = 4, minSpeed = 64, maxSpee
 		
 		dist := sqrt((xDest-xPos)**2+(yDest-yPos)**2)
 		speed := Ln(dist) * speedScale * tpl
+		
+		
+		DllCall("mouse_event", "UInt", 1, "UInt", deltaX, "UInt", deltaY)
 	}
-	DllCall("QueryPerformanceCounter", "Int64*", ticks)
-	DllCall("mouse_event", "UInt", 1, "UInt", deltaX, "UInt", deltaY)
 }
