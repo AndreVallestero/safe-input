@@ -1,5 +1,5 @@
-SafeMouseMove(xDest, yDest, speedScale = 512, randScale = 1, maxAngleVar = 0.3) {
-	DllCall( "QueryPerformanceFrequency", Int64P, ticksPerSec)
+SafeMouseMove(xDest, yDest, speedScale = 4096, randScale = 1, maxAngleVar = 0.3) {
+	DllCall( "QueryPerformanceFrequency", "Int64*", ticksPerSec)
 	overflowX := 0
 	overflowY := 0
 	Random, scaleVar, -1.0, 1.0
@@ -20,7 +20,7 @@ SafeMouseMove(xDest, yDest, speedScale = 512, randScale = 1, maxAngleVar = 0.3) 
 			angle := 1.5707963
 		else
 			angle := ATan(Abs(distY) / Abs(distX)) + angleVar * Ln(1 + 2.71828182 * dist / 2048)
-		speed := Ln(1 + dist * 16 / speedScale) * speedScale * tpl
+		speed := Ln(1 + dist * 64 / speedScale) * speedScale * tpl
 		if(distX != 0)
 			overflowX := overflowX + Cos(angle) * distX / abs(distX) * speed
 		if(distY != 0)
