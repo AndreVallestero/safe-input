@@ -1,4 +1,4 @@
-SafeMouseMove(xDest, yDest, speedScale = 512, randScale = 1, maxAngleVar = 0.3) {
+SafeMouseMove(xDest, yDest, speedScale = 4096, randScale = 1, maxAngleVar = 0.3) {
 	DllCall( "QueryPerformanceFrequency", Int64P, ticksPerSec)
 	
 	overflowX := 0
@@ -32,7 +32,7 @@ SafeMouseMove(xDest, yDest, speedScale = 512, randScale = 1, maxAngleVar = 0.3) 
 		else
 			angle := ATan(Abs(distY) / Abs(distX)) + angleVar * Ln(1 + 2.71828182 * dist / 4096) ; eulers number
 		
-		speed := Ln(1 + dist * 16 / speedScale) * speedScale * tpl
+		speed := Ln(1 + dist * 64 / speedScale) * speedScale * tpl
 		
 		if(distX != 0)
 			overflowX := overflowX + Cos(angle) * distX / abs(distX) * speed
