@@ -1,9 +1,8 @@
-safe_move_to(xDest, yDest, randScale = 1, speedScale = 4, minSpeed = 64, maxSpeed = 1024, maxAngleVar = 0.3) {
+safe_mouse_move_to(xDest, yDest, randScale = 1, speedScale = 128, maxAngleVar = 0.3) {
 	DllCall( "QueryPerformanceFrequency", Int64P, ticksPerSec)
-	secPerTick = 1.0/ticksPerSec
 	
-	overflowX = 0
-	overflowY = 0
+	overflowX := 0
+	overflowY := 0
 	
 	; Pre-initialize these to improve performance
 	tpl := 0		; Time in seconds per loop
@@ -13,21 +12,39 @@ safe_move_to(xDest, yDest, randScale = 1, speedScale = 4, minSpeed = 64, maxSpee
 	deltaY := 0
 	
 	Random, scaleVar, -100, 100
-	speedScale += scaleVar * randScale / 100.0
+	speedScale += speedScale / 4 * randScale * scaleVar / 100.0
 	Random, angleVar, -maxAngleVar ,maxAngleVar ; angle variance from optimal angle in radians
 	
 	MouseGetPos, xPos, yPos
 	DllCall("QueryPerformanceCounter", "Int64*", currTick)
 	prevTick := currTick
-	while(xPos != xDest or yPos != yDest)
-	{
+	while(xPos != xDest or yPos != yDest) {
 		DllCall("QueryPerformanceCounter", "Int64*", currTick)
-		tpl := (currTick - prevTick) * secPerTick
-		prevTick = currTick
+		tpl := (currTick - prevTick) / ticksPerSec
+		prevTick := currTick
 		
-		dist := sqrt((xDest-xPos)**2+(yDest-yPos)**2)
-		speed := Ln(dist) * speedScale * tpl
+		MouseGetPos, xPos, yPos
+		distX := xDest-xPos
+		distY := yDest-yPos
+		dist := Sqrt(distX**2 + distY**2)
+		if(distX = 0)
+			angle := 1.5707963 ; pi / 2
+		else
+			angle := ATan(Abs(distY) / Abs(distX)) + abs(angleVar) * Ln(1 + 2.71828182 * dist / 4096) ; eulers number
 		
+		speed := Ln(1 + dist) * speedScale * tpl
+		
+		if(distX != 0)
+			overflowX := overflowX + Cos(angle) * distX / abs(distX) * speed
+		if(distY != 0)
+			overflowY := overflowY + Sin(angle) * distY / abs(distY) * speed
+		
+		cutX := Mod(overflowX, 1.0)
+		cutY := Mod(overflowY, 1.0)
+		deltaX := overflowX - cutX
+		deltaY := overflowY - cutY
+		overflowX := cutX
+		overflowY := cutY
 		
 		DllCall("mouse_event", "UInt", 1, "UInt", deltaX, "UInt", deltaY)
 	}
