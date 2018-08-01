@@ -34,11 +34,3 @@ SafeMouseMove(xDest, yDest, speedScale = 512, randScale = 1, maxAngleVar = 0.3) 
 		DllCall("mouse_event", "UInt", 1, "UInt", deltaX, "UInt", deltaY)
 	}
 }
-
-Ins::
-	SafeMouseMove(0, 0)
-	return
-
-End::
-	ExitApp
-	
