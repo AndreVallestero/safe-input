@@ -1,5 +1,5 @@
 SafeMouseMove(xDest, yDest, speedScale = 4096, randScale = 1, maxAngleVar = 0.3) {
-	DllCall( "QueryPerformanceFrequency", Int64P, ticksPerSec)
+	DllCall( "QueryPerformanceFrequency", "Int64*", ticksPerSec)
 	
 	overflowX := 0
 	overflowY := 0
